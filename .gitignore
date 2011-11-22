@@ -1,5 +1,6 @@
 .metadata
 .gradle
+.DS_Store
 WelcExamples/bin
 WelcExamples/libs
 WelcExamples/jmockit
