@@ -1,5 +1,7 @@
 .metadata
+.gradle
 WelcExamples/bin
 WelcExamples/libs
 WelcExamples/jmockit
 WelcExamples/.settings/
+build/
