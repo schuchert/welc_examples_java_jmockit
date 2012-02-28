@@ -8,3 +8,6 @@ WelcExamples/libs
 WelcExamples/jmockit
 WelcExamples/.settings/
 build/
+*.iml
+*.ipr
+*.iws
