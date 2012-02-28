@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import mockit.NonStrictExpectations;
 
@@ -18,12 +19,19 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
 
 public class CurrencyConversionTestDoubledTest {
+    private Map<String, String> mapFrom(String...keyValuePairs) {
+       Map<String, String> result = new ConcurrentHashMap<String, String>();
+       for(int i = 0; i < keyValuePairs.length; ++i)
+           result.put(keyValuePairs[i], keyValuePairs[i]);
+       return result;
+    }
+    
 	@Test(expected = IllegalArgumentException.class)
 	public void willThrowExceptionWhenToCurrencyNotFound() {
 		new NonStrictExpectations(CurrencyConversion.class) {
 			{
 				CurrencyConversion.currencySymbols();
-				result = Arrays.asList(new String[] { "FOO" });
+				result = mapFrom("Foo");
 			}
 		};
 		CurrencyConversion.convertFromTo("FOO", "BAR");
@@ -34,7 +42,7 @@ public class CurrencyConversionTestDoubledTest {
 		new NonStrictExpectations(CurrencyConversion.class) {
 			{
 				CurrencyConversion.currencySymbols();
-				result = new LinkedList<String>();
+				result = new ConcurrentHashMap<String, String>();
 			}
 		};
 		CurrencyConversion.convertFromTo("EUR", "EUR");
@@ -63,7 +71,7 @@ public class CurrencyConversionTestDoubledTest {
 		new NonStrictExpectations(CurrencyConversion.class) {
 			{
 				CurrencyConversion.currencySymbols();
-				result = Arrays.asList(new String[] { "X", "Y" });
+				result = mapFrom("X", "Y");
 			}
 		};
 
@@ -76,8 +84,7 @@ public class CurrencyConversionTestDoubledTest {
 		new NonStrictExpectations(CurrencyConversion.class) {
 			{
 				CurrencyConversion.currencySymbols();
-				result = Arrays.asList(new String[] { "A", "B", "C", "D", "E",
-						"F", "G", "H", "I", "J", "K" });
+				result = mapFrom("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K");
 				CurrencyConversion.convertFromTo(anyString, anyString);
 				result = BigDecimal.ONE;
 			}

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class DealPathFinder {
@@ -17,8 +18,8 @@ public class DealPathFinder {
 
 	LinkedList<LinkedList<Conversion>> findDealsOfLengthLessThan(
 			int maxPathLength) {
-		List<String> currencySymbols = CurrencyConversion.currencySymbols();
-		List<Conversion> allPairs = allPairs(baseCurrency, currencySymbols);
+		Map<String, String> currencySymbols = CurrencyConversion.currencySymbols();
+		List<Conversion> allPairs = allPairs(baseCurrency, currencySymbols.keySet());
 		Collection<String> allCurrenciesWithConversion = currenciesWithConversions(allPairs);
 		allCurrenciesWithConversion.remove(baseCurrency);
 
@@ -40,9 +41,9 @@ public class DealPathFinder {
 	}
 
 	List<Conversion> allPairs(String baseCurrency,
-			List<String> currenciesUnderConsideration) {
+			Collection<String> set) {
 		List<Conversion> allPairs = new LinkedList<Conversion>();
-		for (String current : currenciesUnderConsideration) {
+		for (String current : set) {
 			conditionallyAddNewConversion(allPairs, current, baseCurrency);
 			conditionallyAddNewConversion(allPairs, baseCurrency, current);
 		}

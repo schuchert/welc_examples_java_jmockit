@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -18,14 +16,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class CurrencyConversion {
-	static List<String> allCurrenciesCache;
+	static Map<String, String> allCurrenciesCache;
 	static long lastCacheRead = Long.MAX_VALUE;
 
 	public static Map<String, BigDecimal> allConversions() {
-		List<String> allSymbols = CurrencyConversion.currencySymbols();
+		Map<String, String> allSymbols = CurrencyConversion.currencySymbols();
 		Map<String, BigDecimal> conversions = new ConcurrentHashMap<String, BigDecimal>();
-		for (String outerSymbol : allSymbols)
-			for (String innerSymbol : allSymbols) {
+		for (String outerSymbol : allSymbols.keySet())
+			for (String innerSymbol : allSymbols.keySet()) {
 				BigDecimal conversion = null;
 				try {
 					conversion = CurrencyConversion.convertFromTo(outerSymbol,
@@ -40,13 +38,13 @@ public class CurrencyConversion {
 		return conversions;
 	}
 
-	public static List<String> currencySymbols() {
+	public static Map<String, String> currencySymbols() {
 		if (allCurrenciesCache != null
 				&& System.currentTimeMillis() - lastCacheRead < 5 * 60 * 1000) {
 			return allCurrenciesCache;
 		}
 
-		LinkedList<String> result = new LinkedList<String>();
+        Map<String, String> symbolToName = new ConcurrentHashMap<String, String>();
 		String url = "http://www.xe.com/iso4217.php";
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
@@ -61,10 +59,10 @@ public class CurrencyConversion {
 				boolean foundTable = false;
 				while ((l = br.readLine()) != null) {
 					if (foundTable) {
-                        Pattern symbol = Pattern.compile("href=\"/currency/[^>]+>(...)</a></td>");
+                        Pattern symbol = Pattern.compile("href=\"/currency/[^>]+>(...)</a></td><td class=\"[^\"]+\">([A-Za-z ]+)");
                         Matcher m = symbol.matcher(l);
                         while(m.find()) {
-                            result.add(m.group(1));
+                            symbolToName.put(m.group(1), m.group(2));
                         }
 					}
 					if (l.indexOf("currencyTable") >= 0)
@@ -78,19 +76,19 @@ public class CurrencyConversion {
 			throw new RuntimeException(e);
 		}
 
-		allCurrenciesCache = result;
+		allCurrenciesCache = symbolToName;
 		lastCacheRead = System.currentTimeMillis();
 
-		return result;
+		return symbolToName;
 	}
 
 	public static BigDecimal convertFromTo(String fromCurrency,
 			String toCurrency) {
-		List<String> valid = currencySymbols();
-		if (!valid.contains(fromCurrency))
+		Map<String, String> symbolToName = currencySymbols();
+		if (!symbolToName.containsKey(fromCurrency))
 			throw new IllegalArgumentException(String.format(
 					"Invalid from currency: %s", fromCurrency));
-		if (!valid.contains(toCurrency))
+		if (!symbolToName.containsKey(toCurrency))
 			throw new IllegalArgumentException(String.format(
 					"Invalid to currency: %s", toCurrency));
 		String url = String
