@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -45,7 +47,7 @@ public class CurrencyConversion {
 		}
 
 		LinkedList<String> result = new LinkedList<String>();
-		String url = "http://www.jhall.demon.co.uk/currency/by_currency.html";
+		String url = "http://www.xe.com/iso4217.php";
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpGet httpget = new HttpGet(url);
@@ -59,12 +61,13 @@ public class CurrencyConversion {
 				boolean foundTable = false;
 				while ((l = br.readLine()) != null) {
 					if (foundTable) {
-						if (l.matches("\\s+<td valign=top>[A-Z]{3}</td>")) {
-							result.add(l.replaceAll(".*top>", "").replaceAll(
-									"</td>", ""));
-						}
+                        Pattern symbol = Pattern.compile("href=\"/currency/[^>]+>(...)</a></td>");
+                        Matcher m = symbol.matcher(l);
+                        while(m.find()) {
+                            result.add(m.group(1));
+                        }
 					}
-					if (l.startsWith("<h3>Currency Data"))
+					if (l.indexOf("currencyTable") >= 0)
 						foundTable = true;
 					else
 						continue;
