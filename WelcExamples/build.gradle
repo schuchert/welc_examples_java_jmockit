@@ -14,4 +14,6 @@ dependencies {
   testCompile group: 'junit', name: 'junit', version: '4.8+'
 }
 
-tasks.eclipse.dependsOn(cleanEclipse)
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.2.1' 
+}
