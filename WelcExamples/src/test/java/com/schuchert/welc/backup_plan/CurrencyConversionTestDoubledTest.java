@@ -1,28 +1,27 @@
 package com.schuchert.welc.backup_plan;
 
-import static org.junit.Assert.assertEquals;
+import com.schuchert.welc.CurrencyConversion;
+import mockit.Mocked;
+import mockit.NonStrictExpectations;
+import mockit.integration.junit4.JMockit;
+import org.apache.http.client.fluent.Content;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.client.fluent.Response;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import mockit.NonStrictExpectations;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.Test;
-
-import com.schuchert.welc.CurrencyConversion;
-
+@RunWith(JMockit.class)
 public class CurrencyConversionTestDoubledTest {
    private Map<String, String> mapFrom(String... keyValuePairs) {
-      Map<String, String> result = new ConcurrentHashMap<String, String>();
-      for (int i = 0; i < keyValuePairs.length; ++i)
-         result.put(keyValuePairs[i], keyValuePairs[i]);
+      Map<String, String> result = new ConcurrentHashMap<>();
+      for (String keyValuePair : keyValuePairs) result.put(keyValuePair, keyValuePair);
       return result;
    }
 
@@ -49,22 +48,19 @@ public class CurrencyConversionTestDoubledTest {
    }
 
    @Test
-   public void convertsCorreclty() throws Exception {
-      final ByteArrayInputStream bais = new ByteArrayInputStream(
-            "<div id=\"converter_results\"><ul><li><b>5 x = 42 Y</b>"
-                  .getBytes());
+   public void convertsCorreclty(@Mocked final Request request, @Mocked final Response response, @Mocked final Content content) throws Exception {
+      final String stubbedResult = "<div id=\"converter_results\"><ul><li><strong>5 x = 42 Y</strong>";
 
       new NonStrictExpectations() {
-         DefaultHttpClient httpclient;
-         HttpResponse response;
-         HttpEntity entity;
          {
-            httpclient.execute((HttpUriRequest) any);
+            Request.Get(anyString);
+            result = request;
+            request.execute();
             result = response;
-            response.getEntity();
-            result = entity;
-            entity.getContent();
-            result = bais;
+            response.returnContent();
+            result = content;
+            content.asString();
+            result = stubbedResult;
          }
       };
 

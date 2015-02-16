@@ -1,26 +1,13 @@
 package com.schuchert.welc.backup_plan;
 
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.junit.Ignore;
+import com.schuchert.welc.CurrencyConversion;
 import org.junit.Test;
 
-import com.schuchert.welc.CurrencyConversion;
+import java.math.BigDecimal;
+
+import static org.junit.Assert.assertTrue;
 
 public class CurrencyConversionTest {
-   @Test
-   @Ignore
-   public void displayAllConversionRates() {
-      Map<String, BigDecimal> conversions = CurrencyConversion
-            .allConversions();
-      for (Entry<String, BigDecimal> current : conversions.entrySet())
-         System.out.printf("%s - %s\n", current.getKey(), current.getValue());
-   }
-
    @Test
    public void canGetAConversionRate() {
       BigDecimal result = CurrencyConversion.convertFromTo("USD", "EUR");
