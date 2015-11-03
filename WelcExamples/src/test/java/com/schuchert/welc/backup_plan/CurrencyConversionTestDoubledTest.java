@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(JMockit.class)
 public class CurrencyConversionTestDoubledTest {
    private Map<String, String> mapFrom(String... keyValuePairs) {
-      Map<String, String> result = new ConcurrentHashMap<>();
+      Map<String, String> result = new ConcurrentHashMap<String, String>();
       for (String keyValuePair : keyValuePairs) result.put(keyValuePair, keyValuePair);
       return result;
    }

@@ -19,7 +19,7 @@ public class CurrencyConversion {
     public static Map<String, BigDecimal> allConversions() {
         Map<String, String> allSymbols = CurrencyConversion.currencySymbols();
         Map<String, BigDecimal> conversions
-                = new ConcurrentHashMap<>();
+                = new ConcurrentHashMap<String, BigDecimal>();
         for (String outerSymbol : allSymbols.keySet())
             for (String innerSymbol : allSymbols.keySet()) {
                 BigDecimal conversion;
@@ -50,7 +50,7 @@ public class CurrencyConversion {
             return allCurrenciesCache;
         }
 
-        Map<String, String> symbolToName = new ConcurrentHashMap<>();
+        Map<String, String> symbolToName = new ConcurrentHashMap<String, String>();
         String url = "http://en.wikipedia.org/wiki/ISO_4217";
 
         try {

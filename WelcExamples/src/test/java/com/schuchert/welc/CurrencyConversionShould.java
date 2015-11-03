@@ -3,10 +3,12 @@ package com.schuchert.welc;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.NonStrictExpectations;
+import mockit.integration.junit4.JMockit;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
+@RunWith(JMockit.class)
 public class CurrencyConversionShould {
     @Test
     public void workWithValidConversionRequest() {
@@ -24,7 +27,7 @@ public class CurrencyConversionShould {
     }
 
     private Map<String, String> mapOf(String... values) {
-        ConcurrentHashMap<String, String> result = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, String> result = new ConcurrentHashMap<String, String>();
         for (String current : values) {
             result.put(current, current);
         }
