@@ -35,15 +35,6 @@ public class CurrencyConversion {
         return conversions;
     }
 
-    private static void conditionallyApplyProxy(Request request) {
-        String proxyProperty = System.getenv("HTTP_PROXY");
-        if (proxyProperty != null) {
-            String proxy = proxyProperty.replace("http://", "").replaceAll(":.*", "");
-            int port = Integer.parseInt(proxyProperty.replaceAll(".*:", ""));
-            request.viaProxy(new HttpHost(proxy, port));
-        }
-    }
-
     public static Map<String, String> currencySymbols() {
         if (allCurrenciesCache != null
                 && System.currentTimeMillis() - lastCacheRead < 5 * 60 * 1000) {
@@ -55,7 +46,12 @@ public class CurrencyConversion {
 
         try {
             Request request = Request.Get(url);
-            conditionallyApplyProxy(request);
+            String proxyProperty = System.getenv("HTTP_PROXY");
+            if (proxyProperty != null) {
+                String proxy = proxyProperty.replace("http://", "").replaceAll(":.*", "");
+                int port = Integer.parseInt(proxyProperty.replaceAll(".*:", ""));
+                request.viaProxy(new HttpHost(proxy, port));
+            }
 
             Content content = request.execute().returnContent();
             InputStreamReader irs = new InputStreamReader(content.asStream());
@@ -94,7 +90,12 @@ public class CurrencyConversion {
                         toCurrency, fromCurrency);
         try {
             Request request = Request.Get(url);
-            conditionallyApplyProxy(request);
+            String proxyProperty = System.getenv("HTTP_PROXY");
+            if (proxyProperty != null) {
+                String proxy = proxyProperty.replace("http://", "").replaceAll(":.*", "");
+                int port = Integer.parseInt(proxyProperty.replaceAll(".*:", ""));
+                request.viaProxy(new HttpHost(proxy, port));
+            }
             Content content = request.execute().returnContent();
             String theWholeThing = content.asString();
             int start = theWholeThing
