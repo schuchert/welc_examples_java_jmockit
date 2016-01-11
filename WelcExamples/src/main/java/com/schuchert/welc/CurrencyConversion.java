@@ -99,11 +99,10 @@ public class CurrencyConversion {
             Content content = request.execute().returnContent();
             String theWholeThing = content.asString();
             int start = theWholeThing
-                    .lastIndexOf("<div id=\"converter_results\"><ul><li>");
+                    .lastIndexOf("<h1 class=\"page-title\">");
             String substring = theWholeThing.substring(start);
-            int startOfInterestingStuff = substring.indexOf("<strong>") + 8;
-            int endOfIntererestingStuff = substring.indexOf("</strong>",
-                    startOfInterestingStuff);
+            int startOfInterestingStuff = substring.indexOf("<span id=\"currency-rate\">") + 25;
+            int endOfIntererestingStuff = substring.indexOf("</span>", startOfInterestingStuff);
             String interestingStuff = substring.substring(
                     startOfInterestingStuff, endOfIntererestingStuff);
             String[] parts = interestingStuff.split("=");

@@ -52,7 +52,7 @@ public class CurrencyConversionShould {
             response.returnContent();
             result = content;
             content.asString();
-            result = "<div id=\"converter_results\"><ul><li><strong>1 x = 42 Y</strong>";
+            result = "<h1 class=\"page-title\">EUR to USD Exchange Rate <span id=\"currency-rate\">1 EUR = 42 USD</span>";
         }};
 
         BigDecimal result = CurrencyConversion.convertFromTo("USD", "EUR");
